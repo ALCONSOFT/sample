@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sample_order,sample.order,model_sample_order,group_sample_user,1,1,1,1
+access_sample_order_manager,sample.order,model_sample_order,group_sample_manager,1,1,1,1
+access_sample_order_line,sample.order.line user,model_sample_order_line,base.group_user,1,1,1,1
