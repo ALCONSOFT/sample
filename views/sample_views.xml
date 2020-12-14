@@ -193,7 +193,7 @@
                             <field name="diazafra"/>
                             <field name="id" invisible="1"/>
                             <field name="frente"/>
-                            <field name="tipocorte"/>
+                            <field name="tipocorte" placeholder="Tipor Corte, CEPA, SOCA"/>
                             <field name="variedad"/>
                         </group>
                         <group>
@@ -250,8 +250,6 @@
                                 </tree>
                             </field>
                             <group class="oe_subtotal_footer oe_right">
-                                <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                                 <div class="oe_subtotal_footer_separator oe_inline">
                                     <label for="amount_total"/>
                                 </div>

@@ -142,13 +142,26 @@ class SampleOrder(models.Model):
     frente = fields.Many2one('fincas_pma.frentes', string = 'Frente', tracking=True)
     projects_id = fields.Many2one('project.project',string="Project")
 
-    tipocorte = fields.Many2one('fincas_pma.tiposcortes', string = 'T.D.C.', tracking=True)
+    tipocorte = fields.Many2one('fincas_pma.tiposcortes', string = 'T.D.C.', tracking=True, placeholder='Tipo Corte/Cultivo')
     variedad = fields.Many2one('fincas_pma.variedades', string = 'Variedad', tracking=True)
 
     fdc = fields.Date('Fecha Cosecha', tracking=True)
     hdc = fields.Datetime('Fecha Hora Cosecha', tracking=True)
     hdq = fields.Datetime('Fecha Hora Quema', tracking=True)
-    diazafra = fields.Float("Día Zafra: ", tracking=True, required=True, compute="_devuelve_dia_zafra", store=True)
+    diazafra = fields.Float("Día Zafra: ", tracking=True, required=True, compute="_devuelve_dia_zafra")
+    #, store=True
+    equipo_id = fields.Many2one('maintenance.equipment',string="Equipo:", tracking=True, required=True)
+    empleado_id = fields.Many2one('hr.employee',string="Empleado:", tracking=True, required=True)
+    
+
+    @api.onchange('projects_id')
+    def _devuelve_tipocorte_project(self):
+        for record in self:
+            self.tipocorte = record.projects_id.tipocorte
+            self.variedad = record.projects_id.variedad
+            self.partner_id = record.projects_id.partner_id
+            self.up = record.projects_id.up
+            self.lote = record.projects_id.lote
 
     @api.depends('hdc')
     def _devuelve_dia_zafra(self):
@@ -881,7 +894,7 @@ class SampleOrderLine(models.Model):
 
             # compute qty_to_invoice
             if line.order_id.state in ['sample', 'done']:
-                if line.product_id.Sample_method == 'sample':
+                if line.product_id.purchase_method == 'sample':
                     line.qty_to_invoice = line.product_uom_qty - line.qty_invoiced
                 else:
                     line.qty_to_invoice = line.qty_received - line.qty_invoiced
