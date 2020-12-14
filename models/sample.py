@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from datetime import datetime, time
+from datetime import datetime, date, time, timedelta
+import calendar
+#from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 from itertools import groupby
 from pytz import timezone, UTC
@@ -135,17 +137,23 @@ class SampleOrder(models.Model):
 
     receipt_reminder_email = fields.Boolean('Receipt Reminder Email', related='partner_id.receipt_reminder_email', readonly=False)
     reminder_date_before_receipt = fields.Integer('Days Before Receipt', related='partner_id.reminder_date_before_receipt', readonly=False)
-
+    # AGREGANDO CAMPOS QUE NO ESTAN EN MODULO DE COMPRAS
+    tickete = fields.Char('N° Tickete:', required=True, index=True, copy=False, default='000000')
     frente = fields.Many2one('fincas_pma.frentes', string = 'Frente', tracking=True)
     projects_id = fields.Many2one('project.project',string="Project")
 
     tipocorte = fields.Many2one('fincas_pma.tiposcortes', string = 'T.D.C.', tracking=True)
     variedad = fields.Many2one('fincas_pma.variedades', string = 'Variedad', tracking=True)
 
-    fdc = fields.Date('Fecha de Cosecha', tracking=True)
-    hdc = fields.Datetime('Fecha y Hora de Cosecha', tracking=True)
-    hdq = fields.Datetime('Fecha y Hora de Quema', tracking=True)
+    fdc = fields.Date('Fecha Cosecha', tracking=True)
+    hdc = fields.Datetime('Fecha Hora Cosecha', tracking=True)
+    hdq = fields.Datetime('Fecha Hora Quema', tracking=True)
+    diazafra = fields.Float("Día Zafra: ", tracking=True, required=True, compute="_devuelve_dia_zafra", store=True)
 
+    @api.depends('hdc')
+    def _devuelve_dia_zafra(self):
+        for record in self:
+            record.diazafra = float((datetime.now()-datetime(2020, 12, 1, 6, 0, 0)).days)
 
     @api.constrains('company_id', 'order_line')
     def _check_order_line_company_id(self):
@@ -774,7 +782,7 @@ class SampleOrderLine(models.Model):
     taxes_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
     product_uom = fields.Many2one('uom.uom', string='Unit of Measure', domain="[('category_id', '=', product_uom_category_id)]")
     product_uom_category_id = fields.Many2one(related='product_id.uom_id.category_id')
-    product_id = fields.Many2one('product.product', string='Product', domain=[('Sample_ok', '=', True)], change_default=True)
+    product_id = fields.Many2one('product.product', string='Product', change_default=True)
     product_type = fields.Selection(related='product_id.type', readonly=True)
     price_unit = fields.Float(string='Unit Price', required=True, digits='Product Price')
 
@@ -1079,8 +1087,8 @@ class SampleOrderLine(models.Model):
     def _get_product_Sample_description(self, product_lang):
         self.ensure_one()
         name = product_lang.display_name
-        if product_lang.description_Sample:
-            name += '\n' + product_lang.description_Sample
+        if product_lang.description_purchase:
+            name += '\n' + product_lang.description_purchase
 
         return name
 
@@ -1156,8 +1164,8 @@ class SampleOrderLine(models.Model):
             partner_id=partner.id,
         )
         name = product_lang.display_name
-        if product_lang.description_Sample:
-            name += '\n' + product_lang.description_Sample
+        if product_lang.description_purchase:
+            name += '\n' + product_lang.description_purchase
 
         date_planned = self.order_id.date_planned or self._get_date_planned(seller, po=po)
 
