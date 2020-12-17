@@ -152,7 +152,8 @@ class SampleOrder(models.Model):
     #, store=True
     equipo_id = fields.Many2one('maintenance.equipment',string="Equipo:", tracking=True, required=True)
     empleado_id = fields.Many2one('hr.employee',string="Empleado:", tracking=True, required=True)
-    
+    up = fields.Many2one('fincas_pma.up', string = 'U.P.', tracking=True, readonly=True)
+    lote = fields.Char('LOT', required=True, tracking=True, default='000', readonly=True)
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):

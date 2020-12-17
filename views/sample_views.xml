@@ -2,17 +2,17 @@
 <odoo>
 
         <!-- Top menu item -->
-        <menuitem name="Cane Sample"
+        <menuitem name="Muestra de Caña"
             id="menu_sample_root"
             groups="group_sample_manager,group_sample_user"
             web_icon="sample,static/description/icon.png"
             sequence="25"/>
 
-        <menuitem id="menu_procurement_management" name="Cane Sampling Orders"
+        <menuitem id="menu_procurement_management" name="Pedido de Muestra Caña"
             parent="menu_sample_root" sequence="1" />
 
         <!--Supplier menu-->
-        <menuitem id="menu_procurement_management_supplier_name" name="Vendors"
+        <menuitem id="menu_procurement_management_supplier_name" name="Proveedores"
             parent="menu_procurement_management"
             action="account.res_partner_action_supplier" sequence="15"/>
 
@@ -195,6 +195,7 @@
                             <field name="frente"/>
                             <field name="tipocorte" placeholder="Tipor Corte, CEPA, SOCA"/>
                             <field name="variedad"/>
+                            <field name="equipo_id"/>
                         </group>
                         <group>
                             <field name="projects_id"/>
@@ -205,17 +206,14 @@
                                 <field name="mail_reception_confirmed" invisible="1"/>
                                 <span class="text-muted" attrs="{'invisible': [('mail_reception_confirmed','=', False)]}">(confirmed by vendor)</span>
                             </div>
-
                             <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
-
                             <field name="fdc" attrs="{'invisible': [('state','=','sample')]}"/>
                             <label for="fdc" attrs="{'invisible': [('state','!=','sample')]}"/>
-
                             <field name="hdc" attrs="{'invisible': [('state','=','sample')]}"/>
                             <label for="hdc" attrs="{'invisible': [('state','!=','sample')]}"/>
-
                             <field name="hdq" attrs="{'invisible': [('state','=','sample')]}"/>
                             <label for="hdq" attrs="{'invisible': [('state','!=','sample')]}"/>
+                            <field name="empleado_id" />
 
                         </group>
                     </group>
