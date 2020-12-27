@@ -27,14 +27,31 @@ class SampleOrder(models.Model):
     def _amount_all(self):
         for order in self:
             amount_untaxed = amount_tax = 0.0
+            # Modificada: 2020-12-26 [qty_total]
+            qty_total = 0.0
             for line in order.order_line:
                 line._compute_amount()
                 amount_untaxed += line.price_subtotal
                 amount_tax += line.price_tax
+                qty_total += line.product_qty
             order.update({
                 'amount_untaxed': order.currency_id.round(amount_untaxed),
                 'amount_tax': order.currency_id.round(amount_tax),
                 'amount_total': amount_untaxed + amount_tax,
+                'qty_total': qty_total,
+            })
+            porc_impu = 0
+            for linew in order.order_line:
+                linew.tot_qty = qty_total
+                if linew.tot_qty == 0:
+                    linew.porc_item = 0
+                else:
+                    linew.porc_item = linew.product_qty/linew.tot_qty*100
+                if linew.name != 'MUESTRA CAÑA LIMPIA':
+                    porc_impu += linew.porc_item
+            order.update({
+                'porc_impureza': porc_impu,
+                'porc_cana_limpia': 100.0 - porc_impu
             })
 
     @api.depends('state', 'order_line.qty_to_invoice')
@@ -138,6 +155,8 @@ class SampleOrder(models.Model):
     receipt_reminder_email = fields.Boolean('Receipt Reminder Email', related='partner_id.receipt_reminder_email', readonly=False)
     reminder_date_before_receipt = fields.Integer('Days Before Receipt', related='partner_id.reminder_date_before_receipt', readonly=False)
     # AGREGANDO CAMPOS QUE NO ESTAN EN MODULO DE COMPRAS
+    active = fields.Boolean('Activo', default=True)
+    guia = fields.Char('N° Guia:', required=True, index=True, copy=False, default='000000')
     tickete = fields.Char('N° Tickete:', required=True, index=True, copy=False, default='000000')
     frente = fields.Many2one('fincas_pma.frentes', string = 'Frente', tracking=True)
     projects_id = fields.Many2one('project.project',string="Project")
@@ -148,12 +167,16 @@ class SampleOrder(models.Model):
     fdc = fields.Date('Fecha Cosecha', tracking=True)
     hdc = fields.Datetime('Fecha Hora Cosecha', tracking=True)
     hdq = fields.Datetime('Fecha Hora Quema', tracking=True)
-    diazafra = fields.Float("Día Zafra: ", tracking=True, required=True, compute="_devuelve_dia_zafra")
+    diazafra = fields.Char("Día Zafra: ", tracking=True, required=True, compute="_devuelve_dia_zafra")
     #, store=True
     equipo_id = fields.Many2one('maintenance.equipment',string="Equipo:", tracking=True, required=True)
     empleado_id = fields.Many2one('hr.employee',string="Empleado:", tracking=True, required=True)
     up = fields.Many2one('fincas_pma.up', string = 'U.P.', tracking=True, readonly=True)
     lote = fields.Char('LOT', required=True, tracking=True, default='000', readonly=True)
+    zafra = fields.Many2one('fincas_pma.zafras', string = '-Periodo Zafra [Año]', tracking=True)
+    qty_total = fields.Float(string='Cant. Total', store=True, readonly=True, compute='_amount_all')
+    porc_impureza = fields.Float(string='Porc. Impurezas', store=True, readonly=True, compute='_amount_all')
+    porc_cana_limpia = fields.Float(string='Porc. Caña Limpia', store=True, readonly=True, compute='_amount_all')
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):
@@ -167,7 +190,7 @@ class SampleOrder(models.Model):
     @api.depends('hdc')
     def _devuelve_dia_zafra(self):
         for record in self:
-            record.diazafra = float((datetime.now()-datetime(2020, 12, 1, 6, 0, 0)).days)
+            record.diazafra = str(float((datetime.now()-datetime(2020, 12, 1, 6, 0, 0)).days))
 
     @api.constrains('company_id', 'order_line')
     def _check_order_line_company_id(self):
@@ -780,8 +803,9 @@ class SampleOrder(models.Model):
     def _update_update_date_activity(self, updated_dates, activity):
         for line, date in updated_dates:
             activity.note += _('<p> &nbsp; - %s from %s to %s </p>') % (line.product_id.display_name, line.date_planned.date(), date.date())
-
-
+############################################################################################################
+############################################################################################################
+############################################################################################################
 class SampleOrderLine(models.Model):
     _name = 'sample.order.line'
     _description = 'Sample Order Line'
@@ -827,7 +851,15 @@ class SampleOrderLine(models.Model):
     partner_id = fields.Many2one('res.partner', related='order_id.partner_id', string='Partner', readonly=True, store=True)
     currency_id = fields.Many2one(related='order_id.currency_id', store=True, string='Currency', readonly=True)
     date_order = fields.Datetime(related='order_id.date_order', string='Order Date', readonly=True)
-
+    #############################################
+    # campos agregados ##########################
+    #############################################
+    active = fields.Boolean('Activo', default=True)
+    guia = fields.Char('-N° Guia:', required=True, index=True, copy=False, default='000000')
+    porc_item = fields.Float("-Porcentaje Muestra", store=True, digits='Product Unit of Measure')
+    tot_qty = fields.Float("-Total Muestra", store=True, digits='Product Unit of Measure')
+   
+    
     display_type = fields.Selection([
         ('line_section', "Section"),
         ('line_note', "Note")], default=False, help="Technical field for UX purpose.")
@@ -951,7 +983,7 @@ class SampleOrderLine(models.Model):
 
         if 'product_qty' in values:
             for line in self:
-                if line.order_id.state == 'Sample':
+                if line.order_id.state == 'sample':
                     line.order_id.message_post_with_view('Sample.track_po_line_template',
                                                          values={'line': line, 'product_qty': values['product_qty']},
                                                          subtype_id=self.env.ref('mail.mt_note').id)
@@ -1044,6 +1076,17 @@ class SampleOrderLine(models.Model):
             if product_info.Sample_line_warn == 'block':
                 self.product_id = False
             return {'warning': warning}
+        return {}
+
+    # 2020-12-26 - 12:10
+    @api.onchange('product_qty', 'product_uom')
+    def _onchange_cantidad(self):
+        m_qtyt = self.order_id.qty_total
+        for record in self:
+            if m_qtyt == 0:
+                self.porc_item = 0
+            else:
+                self.porc_item = self.product_qty*100/m_qtyt
         return {}
 
     @api.onchange('product_qty', 'product_uom')
