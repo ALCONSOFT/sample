@@ -47,8 +47,8 @@ class SampleOrder(models.Model):
                     linew.porc_item = 0
                 else:
                     linew.porc_item = linew.product_qty/linew.tot_qty*100
-                if linew.name != 'MUESTRA CAÑA LIMPIA':
-                    porc_impu += linew.porc_item
+                    if linew.name != '[MP-002] MUESTRA CAÑA LIMPIA':
+                        porc_impu += linew.porc_item
             order.update({
                 'porc_impureza': porc_impu,
                 'porc_cana_limpia': 100.0 - porc_impu
