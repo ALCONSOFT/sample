@@ -8,23 +8,23 @@
             web_icon="sample,static/description/icon.png"
             sequence="25"/>
 
-        <menuitem id="menu_procurement_management" name="Pedido de Muestra Caña"
-            parent="menu_sample_root" sequence="1" />
 
-        <!--Supplier menu-->
-        <menuitem id="menu_procurement_management_supplier_name" name="Proveedores"
-            parent="menu_procurement_management"
-            action="account.res_partner_action_supplier" sequence="15"/>
+            <!--Menú Configuración -->    
+            <menuitem id="menu_sample_config"
+                name="Configuration"
+                parent="menu_sample_root"
+                sequence="100"
+                groups="group_sample_manager"/>
 
-        <menuitem id="menu_sample_config" name="Configuration" parent="menu_sample_root" sequence="100" groups="group_sample_manager"/>
+                        <menuitem id="menu_product_pricelist_action2_sample"
+                            action="product.product_supplierinfo_type_action"
+                            parent="menu_sample_config"
+                            sequence="1"/>
 
-        <menuitem
-           action="product.product_supplierinfo_type_action" id="menu_product_pricelist_action2_sample"
-           parent="menu_sample_config" sequence="1"/>
-
-        <menuitem
-            id="menu_product_in_config_sample" name="Products"
-            parent="menu_sample_config" sequence="30"/>
+                        <menuitem id="menu_product_in_config_sample"
+                            name="Products"
+                            parent="menu_sample_config"
+                            sequence="30"/>
 
         <record model="ir.ui.menu" id="menu_product_in_config_sample">
             <field name="groups_id" eval="False"/>
@@ -201,6 +201,8 @@
                             <field name="frente"/>
                             <field name="tipocorte" placeholder="Tipor Corte, CEPA, SOCA"/>
                             <field name="variedad"/>
+                            <label for="tipo_cane" string="Tipo Caña"/>
+                            <field name="tipo_cane" nolabel="1"/>
                             <field name="equipo_id"/>
                         </group>
                         <group>
@@ -599,6 +601,8 @@
                     <field name="name" string="Order"
                         filter_domain="['|', '|', ('name', 'ilike', self), ('partner_ref', 'ilike', self), ('partner_id', 'child_of', self)]"/>
                     <field name="partner_id" operator="child_of"/>
+                    <field name="up"/>
+                    <field name="lote"/>
                     <field name="user_id"/>
                     <field name="product_id"/>
                     <filter name="my_Orders" string="My Orders" domain="[('user_id', '=', uid)]"/>
@@ -684,6 +688,8 @@
                     <field name="priority" optional="show" widget="priority" nolabel="1"/>
                     <field name="message_unread" invisible="1"/>
                     <field name="partner_ref" optional="hide"/>
+                    <field name="up"/>
+                    <field name="lote"/>
                     <field name="name" string="Reference" readonly="1"/>
                     <field name="date_order" invisible="not context.get('quotation_only', False)" optional="show"/>
                     <field name="date_approve" invisible="context.get('quotation_only', False)" optional="show"/>
@@ -727,6 +733,8 @@
                     <field name="name" string="Reference" readonly="1" decoration-bf="1"/>
                     <field name="date_approve" invisible="context.get('quotation_only', False)" optional="show"/>
                     <field name="partner_id" readonly="1"/>
+                    <field name="up"/>
+                    <field name="lote"/>
                     <field name="company_id" readonly="1" options="{'no_create': True}"
                         groups="base.group_multi_company" optional="show"/>
                     <field name="date_planned" invisible="context.get('quotation_only', False)" optional="show"/>
@@ -767,6 +775,8 @@
                     <field name="name" string="Reference" readonly="1" decoration-bf="1"/>
                     <field name="date_approve" widget="date" invisible="context.get('quotation_only', False)" optional="show"/>
                     <field name="partner_id"/>
+                    <field name="up"/>
+                    <field name="lote"/>
                     <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" optional="show"/>
                     <field name="date_planned" invisible="context.get('quotation_only', False)" optional="show"/>
                     <field name="user_id" widget="many2one_avatar_user" optional="show"/>
@@ -795,6 +805,8 @@
                             <div>
                                 <field name="name" display="full"/>
                                 <field name="partner_id" muted="1" display="full"/>
+                                <field name="up"/>
+                                <field name="lote"/>
                             </div>
                         </div>
                     </templates>
@@ -804,7 +816,7 @@
         
         <!-- SAMPLE RFQ SOLICITUD DE COTIZACION "Q"uotation-->
         <record id="sample_rfq" model="ir.actions.act_window">
-            <field name="name">Requests for Quotation</field>
+            <field name="name">-Requests for Quotation-</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sample.order</field>
             <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
@@ -823,13 +835,10 @@
         </record>
         
         <!--* -->
-        <menuitem action="sample_rfq" id="menu_sample_rfq"
-            parent="menu_procurement_management"
-            sequence="0"/>
         
         <!-- SAMPLE FORM ACTION -->
         <record id="sample_form_action" model="ir.actions.act_window">
-            <field name="name">sample Orders</field>
+            <field name="name">Sample Orders</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sample.order</field>
             <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
@@ -846,8 +855,6 @@
             </field>
         </record>
         
-        <menuitem action="sample_form_action" id="menu_sample_form_action" parent="menu_procurement_management" sequence="6"/>
-
         <!-- SAMPLE ORDER LINE TREE -->
         <record id="sample_order_line_tree" model="ir.ui.view">
             <field name="name">sample.order.line.tree</field>
@@ -960,7 +967,7 @@
     
     <!-- Dashboard action buttons -->
     <!-- Dashboard action buttons: End in List view -->
-    <!--
+    
     <record id="sample_action_dashboard_list" model="ir.actions.act_window">
         <field name="name">Requests for Quotation</field>
         <field name="res_model">sample.order</field>
@@ -974,9 +981,9 @@
             </p>
         </field>
     </record>
-    -->
+    <!---->
     <!-- Dashboard action buttons: End in Kanban view-->
-    <!--
+
     <record id="sample_action_dashboard_kanban" model="ir.actions.act_window">
         <field name="name">Requests for Quotation</field>
         <field name="res_model">sample.order</field>
@@ -990,8 +997,8 @@
             </p>
         </field>
     </record>
-    -->
-    <!--
+    <!---->
+    
     <record id="action_rfq_form" model="ir.actions.act_window">
         <field name="name">Requests for Quotation</field>
         <field name="res_model">sample.order</field>
@@ -1000,5 +1007,30 @@
         <field name="search_view_id" ref="view_sample_order_filter"/>
         <field name="target">main</field>
     </record>
-    -->
+    <!---->
+            <!--Menú: Muestra de Caña-->
+            <menuitem id="menu_procurement_management"
+                name="Muestras de Caña"
+                parent="menu_sample_root"
+                sequence="1"/>
+
+                    <!--Menú: Request for Quotation-->
+                    <menuitem action="sample_rfq"
+                        id="menu_sample_rfq"
+                        parent="menu_procurement_management"
+                        sequence="2"/>
+
+                    <!--Menú: Sample Order-->
+                    <menuitem action="sample_form_action"
+                        id="menu_sample_form_action"
+                        parent="menu_procurement_management"
+                        sequence="6"/>
+
+                    <!--Menú: Proveedor -->
+                    <menuitem id="menu_procurement_management_supplier_name"
+                        name="Proveedores"
+                        parent="menu_procurement_management"
+                        action="account.res_partner_action_supplier"
+                        sequence="15"/>
+
 </odoo>

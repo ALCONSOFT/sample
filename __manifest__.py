@@ -16,7 +16,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': 'Rama main 2020-12-26 - 12:25',
+    'version': 'Rama main 2020-12-29 - 15:20',
 
     # any module necessary for this one to work correctly
     'depends': ['base','purchase','fincas_pma'],

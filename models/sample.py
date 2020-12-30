@@ -177,6 +177,7 @@ class SampleOrder(models.Model):
     qty_total = fields.Float(string='Cant. Total', store=True, readonly=True, compute='_amount_all')
     porc_impureza = fields.Float(string='Porc. Impurezas', store=True, readonly=True, compute='_amount_all')
     porc_cana_limpia = fields.Float(string='Porc. Caña Limpia', store=True, readonly=True, compute='_amount_all')
+    tipo_cane = fields.Selection([('V','CAÑA PICADA VERDE'),('Q','CAÑA QUEMADA')], tracking=True)
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):
