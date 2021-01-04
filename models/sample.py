@@ -14,6 +14,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools.float_utils import float_is_zero
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools.misc import formatLang, get_lang
+from openerp import exceptions
 
 
 class SampleOrder(models.Model):
@@ -102,7 +103,7 @@ class SampleOrder(models.Model):
              "It's used to do the matching when you receive the "
              "products as this reference is usually written on the "
              "delivery order sent by your vendor.")
-    date_order = fields.Datetime('Order Deadline', required=True, states=READONLY_STATES, index=True, copy=False, default=fields.Datetime.now,
+    date_order = fields.Datetime('Fecha Hora Muestra', required=True, states=READONLY_STATES, index=True, copy=False, default=fields.Datetime.now,
         help="Depicts the date within which the Quotation should be confirmed and converted into a Sample order.")
     date_approve = fields.Datetime('Confirmation Date', readonly=1, index=True, copy=False)
     partner_id = fields.Many2one('res.partner', string='Vendor', required=True, states=READONLY_STATES, change_default=True, tracking=True, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]", help="You can find a vendor by its Name, TIN, Email or Internal Reference.")
@@ -144,7 +145,7 @@ class SampleOrder(models.Model):
 
     product_id = fields.Many2one('product.product', related='order_line.product_id', string='Product', readonly=False)
     user_id = fields.Many2one(
-        'res.users', string='Sample Representative', index=True, tracking=True,
+        'res.users', string='Responsable/Muestra', index=True, tracking=True,
         default=lambda self: self.env.user, check_company=True)
     company_id = fields.Many2one('res.company', 'Company', required=True, index=True, states=READONLY_STATES, default=lambda self: self.env.company.id)
     currency_rate = fields.Float("Currency Rate", compute='_compute_currency_rate', compute_sudo=True, store=True, readonly=True, help='Ratio between the Sample order currency and the company currency')
@@ -156,28 +157,29 @@ class SampleOrder(models.Model):
     reminder_date_before_receipt = fields.Integer('Days Before Receipt', related='partner_id.reminder_date_before_receipt', readonly=False)
     # AGREGANDO CAMPOS QUE NO ESTAN EN MODULO DE COMPRAS
     active = fields.Boolean('Activo', default=True)
-    guia = fields.Char('N° Guia:', required=True, index=True, copy=False, default='000000')
-    tickete = fields.Char('N° Tickete:', required=True, index=True, copy=False, default='000000')
-    frente = fields.Many2one('fincas_pma.frentes', string = 'Frente', tracking=True)
-    projects_id = fields.Many2one('project.project',string="Project")
+    guia = fields.Char('N° Guia:', required=True, index=True, copy=False, default='000000', states=READONLY_STATES)
+    tickete = fields.Char('N° Tickete:', required=True, index=True, copy=False, default='000000',states=READONLY_STATES)
+    frente = fields.Many2one('fincas_pma.frentes', string = 'Frente', tracking=True,states=READONLY_STATES)
+    projects_id = fields.Many2one('project.project',string="Project",states=READONLY_STATES)
 
-    tipocorte = fields.Many2one('fincas_pma.tiposcortes', string = 'T.D.C.', tracking=True, placeholder='Tipo Corte/Cultivo')
-    variedad = fields.Many2one('fincas_pma.variedades', string = 'Variedad', tracking=True)
+    tipocorte = fields.Many2one('fincas_pma.tiposcortes', string = 'T.D.C.', tracking=True, placeholder='Tipo Corte/Cultivo',states=READONLY_STATES)
+    variedad = fields.Many2one('fincas_pma.variedades', string = 'Variedad', tracking=True,states=READONLY_STATES)
 
-    fdc = fields.Date('Fecha Cosecha', tracking=True)
-    hdc = fields.Datetime('Fecha Hora Cosecha', tracking=True)
-    hdq = fields.Datetime('Fecha Hora Quema', tracking=True)
-    diazafra = fields.Char("Día Zafra: ", tracking=True, required=True, compute="_devuelve_dia_zafra")
+    fdc = fields.Date('Fecha Cosecha', tracking=True, store=True,states=READONLY_STATES)
+    hdc = fields.Datetime('Fecha Hora Cosecha', tracking=True,states=READONLY_STATES)
+    hdq = fields.Datetime('Fecha Hora Quema', tracking=True,states=READONLY_STATES)
+    diazafra = fields.Char("Día Zafra: ", tracking=True, required=True, compute="_devuelve_dia_zafra",states=READONLY_STATES)
     #, store=True
-    equipo_id = fields.Many2one('maintenance.equipment',string="Equipo:", tracking=True, required=True)
-    empleado_id = fields.Many2one('hr.employee',string="Empleado:", tracking=True, required=True)
-    up = fields.Many2one('fincas_pma.up', string = 'U.P.', tracking=True, readonly=True)
-    lote = fields.Char('LOT', required=True, tracking=True, default='000', readonly=True)
-    zafra = fields.Many2one('fincas_pma.zafras', string = '-Periodo Zafra [Año]', tracking=True)
-    qty_total = fields.Float(string='Cant. Total', store=True, readonly=True, compute='_amount_all')
-    porc_impureza = fields.Float(string='Porc. Impurezas', store=True, readonly=True, compute='_amount_all')
-    porc_cana_limpia = fields.Float(string='Porc. Caña Limpia', store=True, readonly=True, compute='_amount_all')
-    tipo_cane = fields.Selection([('V','CAÑA PICADA VERDE'),('Q','CAÑA QUEMADA')], tracking=True)
+    equipo_id = fields.Many2one('maintenance.equipment',string="Equipo:", tracking=True, required=True,states=READONLY_STATES)
+    empleado_id = fields.Many2one('hr.employee',string="Empleado:", tracking=True, required=True,states=READONLY_STATES)
+    up = fields.Many2one('fincas_pma.up', string = 'U.P.', tracking=True, readonly=True,states=READONLY_STATES)
+    lote = fields.Char('LOT', required=True, tracking=True, default='000', readonly=True,states=READONLY_STATES)
+    zafra = fields.Many2one('fincas_pma.zafras', string = '-Periodo Zafra [Año]', tracking=True,states=READONLY_STATES)
+    qty_total = fields.Float(string='Cant. Total', store=True, readonly=True, compute='_amount_all',states=READONLY_STATES)
+    porc_impureza = fields.Float(string='Porc. Impurezas', store=True, readonly=True, compute='_amount_all',states=READONLY_STATES)
+    porc_cana_limpia = fields.Float(string='Porc. Caña Limpia', store=True, readonly=True, compute='_amount_all',states=READONLY_STATES)
+    tipo_cane = fields.Selection([('PV','CAÑA PICADA VERDE'),('PQ','CAÑA PICADA QUEMADA'),('LV','CAÑA LARGA VERDE'),('LQ','CAÑA LARGA QUEMADA')], tracking=True,states=READONLY_STATES)
+    peso_muestra_total = fields.Float(string='Muestra Total', store=True, tracking=True,states=READONLY_STATES)
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):
@@ -187,11 +189,28 @@ class SampleOrder(models.Model):
             self.partner_id = record.projects_id.partner_id
             self.up = record.projects_id.up
             self.lote = record.projects_id.lote
+            self.frente = record.projects_id.frente
 
+    # 2021-01-02
+    @api.onchange('hdc')
+    def _devuelve_fdc(self):
+        for record in self:
+            if not self.hdc:
+                return
+            else:
+                dt = self.hdc
+                self.fdc = fields.Datetime.to_string(fields.Datetime.context_timestamp(self, fields.Datetime.from_string(dt)))[:10]
+    
+    # 2021-01-02
     @api.depends('hdc')
     def _devuelve_dia_zafra(self):
         for record in self:
-            record.diazafra = str(float((datetime.now()-datetime(2020, 12, 1, 6, 0, 0)).days))
+            #fhiz = datetime(2020, 12, 1, 6, 0, 0)
+            query_str = 'SELECT id, "name", active, code_zafra, description, fecha_hora_inicio, fecha_hora_fin, periodo_actual FROM fincas_pma_calendario where periodo_actual'
+            self._cr.execute( query_str )
+            fhiz = self._cr.fetchone()[5]
+            print("Tipo dato [fhiz]", type(fhiz))
+            record.diazafra = str(float((datetime.now()-fhiz).days))
 
     @api.constrains('company_id', 'order_line')
     def _check_order_line_company_id(self):
@@ -295,14 +314,15 @@ class SampleOrder(models.Model):
                     del line[2]['date_planned']
         return result
 
+    # 2021-01-02
     def _track_subtype(self, init_values):
         self.ensure_one()
         if 'state' in init_values and self.state == 'sample':
-            return self.env.ref('purchase.mt_rfq_approved')
+            return self.env.ref('sample.mt_rfq_approved')
         elif 'state' in init_values and self.state == 'to approve':
-            return self.env.ref('purchase.mt_rfq_confirmed')
+            return self.env.ref('sample.mt_rfq_confirmed')
         elif 'state' in init_values and self.state == 'done':
-            return self.env.ref('purchase.mt_rfq_done')
+            return self.env.ref('sample.mt_rfq_done')
         return super(SampleOrder, self)._track_subtype(init_values)
 
     def _get_report_base_filename(self):
@@ -437,6 +457,25 @@ class SampleOrder(models.Model):
         return {}
 
     def button_confirm(self):
+        # 2021-01-02
+        # Valindando que el peso de la muestra sea mayor que cantidad mínima requerida.
+        query_str = 'SELECT peso_minimo_muestra FROM sample_config sc'
+        self._cr.execute( query_str )
+        m_peso_minimo = self._cr.fetchone()[0]
+        print("Peso mínimo de Muestra: ", m_peso_minimo)
+        if (self.peso_muestra_total >= m_peso_minimo):
+            print("ok")
+        else:
+            raise exceptions.Warning('La Muestra debe ser mayor o igual que: %d' % m_peso_minimo)
+            return False
+        # Validando que la suma de las productos de las muestras sea igual a la muestra total
+        if abs(self.qty_total - self.peso_muestra_total) <= 0.01:
+            print("ok")
+        else:
+            raise exceptions.Warning('Peso total de la muestra no es igual a la sumatoria del contenido!: %f' % self.qty_total)
+            return False
+
+
         for order in self:
             if order.state not in ['draft', 'sent']:
                 continue
@@ -452,6 +491,7 @@ class SampleOrder(models.Model):
                 order.write({'state': 'to approve'})
             if order.partner_id not in order.message_partner_ids:
                 order.message_subscribe([order.partner_id.id])
+            
         return True
 
     def button_cancel(self):

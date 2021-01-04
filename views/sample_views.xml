@@ -148,7 +148,7 @@
                 <header>
                     <button name="action_rfq_send" states="draft" string="Send by Email" type="object" context="{'send_rfq':True}" class="oe_highlight"/>
                     <button name="print_quotation" string="Print RFQ" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>
-                    <button name="button_confirm" type="object" states="sent" string="Confirm Order" class="oe_highlight" id="bid_confirm"/>
+                    <button name="button_confirm" type="object" states="sent" string="Confirmar Muestra" class="oe_highlight" id="bid_confirm"/>
                     <button name="button_approve" type="object" states='to approve' string="Approve Order" class="oe_highlight"/>
                     <!--
                     <button name="button_approve" type="object" states='to approve' string="Approve Order" class="oe_highlight" groups="sample.group_sample_manager"/>
@@ -203,7 +203,7 @@
                             <field name="variedad"/>
                             <label for="tipo_cane" string="Tipo Caña"/>
                             <field name="tipo_cane" nolabel="1"/>
-                            <field name="equipo_id"/>
+                            
                         </group>
                         <group>
                             <field name="projects_id"/>
@@ -215,14 +215,12 @@
                                 <span class="text-muted" attrs="{'invisible': [('mail_reception_confirmed','=', False)]}">(confirmed by vendor)</span>
                             </div>
                             <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
-                            <field name="fdc" attrs="{'invisible': [('state','=','sample')]}"/>
-                            <label for="fdc" attrs="{'invisible': [('state','!=','sample')]}"/>
                             <field name="hdc" attrs="{'invisible': [('state','=','sample')]}"/>
                             <label for="hdc" attrs="{'invisible': [('state','!=','sample')]}"/>
                             <field name="hdq" attrs="{'invisible': [('state','=','sample')]}"/>
                             <label for="hdq" attrs="{'invisible': [('state','!=','sample')]}"/>
-                            <field name="empleado_id" />
                             <field name="porc_impureza" widget="percentpie"/>
+                            <field name="peso_muestra_total"/>
                         </group>
                     </group>
                     <notebook>
@@ -281,265 +279,41 @@
                                 </group>
                             </group>
                         </page>
-
-                    </notebook>
-                </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
-                </div>
-                </form>
-            </field>
-        </record>
-
-        <!--
-        <record id="sample_order_form" model="ir.ui.view">
-            <field name="name">sample.order.form</field>
-            <field name="model">sample.order</field>
-            <field name="arch" type="xml">
-                <form string="sample Order" class="o_purchase_order">
-                <header>
-                    <button name="action_rfq_send" states="draft" string="Send by Email" type="object" context="{'send_rfq':True}" class="oe_highlight"/>
-                    <button name="print_quotation" string="Print RFQ" type="object" states="draft" class="oe_highlight" groups="base.group_user"/>
-                    <button name="button_confirm" type="object" states="sent" string="Confirm Order" class="oe_highlight" id="bid_confirm"/>
-                    <button name="button_approve" type="object" states='to approve' string="Approve Order" class="oe_highlight" groups="sample.group_sample_manager"/>
-                    <button name="action_create_invoice" string="Create Bill" type="object" class="oe_highlight" context="{'create_bill':True}" attrs="{'invisible': ['|', ('state', 'not in', ('sample', 'done')), ('invoice_status', 'in', ('no', 'invoiced'))]}"/>
-                    <button name="action_rfq_send" states="sent" string="Re-Send by Email" type="object" context="{'send_rfq':True}"/>
-                    <button name="print_quotation" string="Print RFQ" type="object" states="sent" groups="base.group_user"/>
-                    <button name="button_confirm" type="object" states="draft" string="Confirm Order" id="draft_confirm"/>
-                    <button name="action_rfq_send" states="sample" string="Send PO by Email" type="object" context="{'send_rfq':False}"/>
-                    <button name="confirm_reminder_mail" string="Confirm Receipt Date" type="object" attrs="{'invisible': ['|','|', ('state', 'not in', ('sample', 'done')), ('mail_reminder_confirmed', '=', True), ('date_planned', '=', False)]}" groups="base.group_no_one"/>
-                    <button name="action_create_invoice" string="Create Bill" type="object" context="{'create_bill':True}" attrs="{'invisible': ['|', '|', ('state', 'not in', ('sample', 'done')), ('invoice_status', 'not in', ('no', 'invoiced')), ('order_line', '=', [])]}"/>
-                    <button name="button_draft" states="cancel" string="Set to Draft" type="object" />
-                    <button name="button_cancel" states="draft,to approve,sent,sample" string="Cancel" type="object" />
-                    <button name="button_done" type="object" string="Lock" states="sample"/>
-                    <button name="button_unlock" type="object" string="Unlock" states="done" groups="sample.group_sample_manager"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,sample" readonly="1"/>
-                </header>
-                <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button type="object"  name="action_view_invoice"
-                            class="oe_stat_button"
-                            icon="fa-pencil-square-o" attrs="{'invisible':['|', ('invoice_count', '=', 0), ('state', 'in', ('draft','sent','to approve'))]}">
-                            <field name="invoice_count" widget="statinfo" string="Vendor Bills"/>
-                            <field name='invoice_ids' invisible="1"/>
-                        </button>
-                    </div>
-                    <div class="oe_title">
-                        <span class="o_form_label" attrs="{'invisible': [('state','not in',('draft','sent'))]}">Request for Quotation </span>
-                        <span class="o_form_label" attrs="{'invisible': [('state','in',('draft','sent'))]}">sample Order </span>
-                        <h1>
-                            <field name="priority" widget="priority" class="mr-3"/>
-                            <field name="name" readonly="1"/>
-                        </h1>
-                    </div>
-                    <group>
-                        <group>
-                            <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
-                                placeholder="Name, TIN, Email, or Reference"
-                            />
-                            <field name="partner_ref"/>
-                            <field name="currency_id" groups="base.group_multi_currency" force_save="1"/>
-                            <field name="id" invisible="1"/>
-                        </group>
-                        <group>
-                            <field name="date_order" attrs="{'invisible': [('state','=','sample')]}"/>
-                            <label for="date_approve" attrs="{'invisible': [('state','!=','sample')]}"/>
-                            <div name="date_approve" attrs="{'invisible': [('state','!=','sample')]}" class="o_row">
-                                <field name="date_approve"/>
-                                <field name="mail_reception_confirmed" invisible="1"/>
-                                <span class="text-muted" attrs="{'invisible': [('mail_reception_confirmed','=', False)]}">(confirmed by vendor)</span>
-                            </div>
-                            <label for="date_planned"/>
-                            <div name="date_planned_div" class="o_row">
-                                <field name="date_planned" attrs="{'readonly': [('state', 'not in', ('draft', 'sent', 'to approve', 'sample'))]}"/>
-                                <field name="mail_reminder_confirmed" invisible="1"/>
-                                <span class="text-muted" attrs="{'invisible': [('mail_reminder_confirmed', '=', False)]}">(confirmed by vendor)</span>
-                            </div>
-                            <label for="receipt_reminder_email" invisible='1'/>
-                            <div name="reminder" class="o_row" groups='sample.group_send_reminder' title="Automatically send a confirmation email to the vendor X days before the expected receipt date, asking him to confirm the exact date.">
-                                <field name="receipt_reminder_email"/>
-                                <span>Ask confirmation</span>
-                                <div class="o_row oe_inline" attrs="{'invisible': [('receipt_reminder_email', '=', False)]}">
-                                    <field name="reminder_date_before_receipt" class="oe_inline"/>
-                                    day(s) before 
-                                    <widget name='toaster_button' button_name="send_reminder_preview" title="Preview the reminder email by sending it to yourself." attrs="{'invisible': [('id', '=', False)]}"/>
-                                </div>
-                            </div>
-                            <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
-                        </group>
-                    </group>
-                    <notebook>
-                        <page string="Products" name="products">
-                            <field name="order_line"
-                                widget="section_and_note_one2many"
-                                mode="tree,kanban"
-                                context="{'default_state': 'draft'}"
-                                attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
-                                <tree string="sample Order Lines" editable="bottom">
-                                    <control>
-                                        <create name="add_product_control" string="Add a product"/>
-                                        <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
-                                        <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
-                                    </control>
-                                    <field name="display_type" invisible="1"/>
-                                    <field name="currency_id" invisible="1"/>
-                                    <field name="state" invisible="1" readonly="1"/>
-                                    <field name="product_type" invisible="1"/>
-                                    <field name="product_uom_category_id" invisible="1"/>
-                                    <field name="invoice_lines" invisible="1"/>
-                                    <field name="sequence" widget="handle"/>
-                                    <field
-                                        name="product_id"
-                                        attrs="{
-                                            'readonly': [('state', 'in', ('sample', 'to approve','done', 'cancel'))],
-                                            'required': [('display_type', '=', False)],
-                                        }"
-                                        context="{'partner_id':parent.partner_id, 'quantity':product_qty,'uom':product_uom, 'company_id': parent.company_id}"
-                                        force_save="1" domain="[('sample_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
-                                    <field name="name" widget="section_and_note_text"/>
-                                    <field name="date_planned" optional="hide" attrs="{'required': [('display_type', '=', False)]}" force_save="1"/>
-                                    <field name="account_analytic_id" optional="hide" context="{'default_partner_id':parent.partner_id}" groups="analytic.group_analytic_accounting" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
-                                    <field name="analytic_tag_ids" optional="hide" groups="analytic.group_analytic_tags" widget="many2many_tags" options="{'color_field': 'color'}" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
-                                    <field name="product_qty"/>
-                                    <field name="qty_received_manual" invisible="1"/>
-                                    <field name="qty_received_method" invisible="1"/>
-                                    <field name="qty_received" string="Received" attrs="{'column_invisible': [('parent.state', 'not in', ('sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="show"/>
-                                    <field name="qty_invoiced" string="Billed" attrs="{'column_invisible': [('parent.state', 'not in', ('sample', 'done'))]}" optional="show"/>
-                                    <field name="product_uom" string="UoM" groups="uom.group_uom"
-                                        attrs="{
-                                            'readonly': [('state', 'in', ('sample', 'done', 'cancel'))],
-                                            'required': [('display_type', '=', False)]
-                                        }"
-                                        force_save="1" optional="show"/>
-                                    <field name="price_unit" attrs="{'readonly': [('invoice_lines', '!=', [])]}"/>
-                                    <field name="taxes_id" widget="many2many_tags" domain="[('type_tax_use','=','sample'), ('company_id', '=', parent.company_id)]" context="{'default_type_tax_use': 'sample', 'search_view_ref': 'account.account_tax_view_search'}" options="{'no_create': True}" optional="show"/>
-                                    <field name="price_subtotal" widget="monetary"/>
-                                </tree>
-                                <form string="sample Order Line">
-                                        <field name="state" invisible="1"/>
-                                        <field name="display_type" invisible="1"/>
-                                        <group attrs="{'invisible': [('display_type', '!=', False)]}">
-                                            <group>
-                                                <field name="product_uom_category_id" invisible="1"/>
-                                                <field name="product_id"
-                                                       context="{'partner_id': parent.partner_id}"
-                                                       widget="many2one_barcode"
-                                                       domain="[('sample_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
-                                                />
-                                                <label for="product_qty"/>
-                                                <div class="o_row">
-                                                    <field name="product_qty"/>
-                                                    <field name="product_uom" groups="uom.group_uom" attrs="{'required': [('display_type', '=', False)]}"/>
-                                                </div>
-                                                <field name="qty_received_method" invisible="1"/>
-                                                <field name="qty_received" string="Received Quantity" attrs="{'invisible': [('parent.state', 'not in', ('sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}"/>
-                                                <field name="qty_invoiced" string="Billed Quantity" attrs="{'invisible': [('parent.state', 'not in', ('sample', 'done'))]}"/>
-                                                <field name="price_unit"/>
-                                                <field name="taxes_id" widget="many2many_tags" domain="[('type_tax_use', '=', 'sample'), ('company_id', '=', parent.company_id)]" options="{'no_create': True}"/>
-                                            </group>
-                                            <group>
-                                                <field name="date_planned" widget="date" attrs="{'required': [('display_type', '=', False)]}"/>
-                                                <field name="account_analytic_id" colspan="2" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" groups="analytic.group_analytic_accounting"/>
-                                                <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                                            </group>
-                                            <group colspan="12">
-                                            <notebook>
-                                                <page string="Notes" name="notes">
-                                                    <field name="name"/>
-                                                </page>
-                                                <page string="Invoices and Incoming Shipments" name="invoices_incoming_shiptments">
-                                                    <field name="invoice_lines"/>
-                                                </page>
-                                            </notebook>
-                                            </group>
-                                        </group>
-                                        <label for="name" string="Section Name (eg. Products, Services)" attrs="{'invisible': [('display_type', '!=', 'line_section')]}"/>
-                                        <label for="name" string="Note" attrs="{'invisible': [('display_type', '!=', 'line_note')]}"/>
-                                        <field name="name" nolabel="1"  attrs="{'invisible': [('display_type', '=', False)]}"/>
-                                 </form>
-                                 <kanban class="o_kanban_mobile">
-                                     <field name="name"/>
-                                     <field name="product_id"/>
-                                     <field name="product_qty"/>
-                                     <field name="product_uom" groups="uom.group_uom"/>
-                                     <field name="price_subtotal"/>
-                                     <field name="price_tax" invisible="1"/>
-                                     <field name="price_total" invisible="1"/>
-                                     <field name="price_unit"/>
-                                     <field name="display_type"/>
-                                     <field name="taxes_id" invisible="1"/>
-                                     <templates>
-                                         <t t-name="kanban-box">
-                                             <div t-attf-class="oe_kanban_card oe_kanban_global_click {{ record.display_type.raw_value ? 'o_is_' + record.display_type.raw_value : '' }}">
-                                                 <t t-if="!record.display_type.raw_value">
-                                                     <div class="row">
-                                                         <div class="col-8">
-                                                             <strong>
-                                                                 <span t-esc="record.product_id.value"/>
-                                                             </strong>
-                                                         </div>
-                                                         <div class="col-4">
-                                                             <strong>
-                                                                 <span t-esc="record.price_subtotal.value" class="float-right text-right"/>
-                                                             </strong>
-                                                         </div>
-                                                     </div>
-                                                     <div class="row">
-                                                         <div class="col-12 text-muted">
-                                                             <span>
-                                                                 Quantity:
-                                                                 <t t-esc="record.product_qty.value"/>
-                                                                 <t t-esc="record.product_uom.value"/>
-                                                             </span>
-                                                         </div>
-                                                     </div>
-                                                     <div class="row">
-                                                         <div class="col-12 text-muted">
-                                                             <span>
-                                                                 Unit Price:
-                                                                 <t t-esc="record.price_unit.value"/>
-                                                             </span>
-                                                         </div>
-                                                     </div>
-                                                 </t>
-                                                 <div
-                                                     t-elif="record.display_type.raw_value === 'line_section' || record.display_type.raw_value === 'line_note'"
-                                                     class="row">
-                                                     <div class="col-12">
-                                                         <span t-esc="record.name.value"/>
-                                                     </div>
-                                                 </div>
-                                             </div>
-                                         </t>
-                                     </templates>
-                                 </kanban>
-                            </field>
-                            <group class="oe_subtotal_footer oe_right">
-                                <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                <div class="oe_subtotal_footer_separator oe_inline">
-                                    <label for="amount_total"/>
-                                </div>
-                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            </group>
-                            <field name="notes" class="oe_inline" placeholder="Define your terms and conditions ..."/>
-                            <div class="oe_clear"/>
-                        </page>
-                        <page string="Other Information" name="sample_delivery_invoice">
+                        <page string="Muestreo" name="sample_muestreo">
                             <group>
-                                <group name="other_info">
-                                    <field name="user_id" domain="[('share', '=', False)]" widget="many2one_avatar_user"/>
-                                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                                <group name="muestreo1_info">
+                                    <field name="empleado_id" string="Encargado/Equipo" />
                                 </group>
-                                <group name="invoice_info">
-                                    <field name="invoice_status" attrs="{'invisible': [('state', 'in', ('draft', 'sent', 'to approve', 'cancel'))]}"/>
-                                    <field name="payment_term_id" attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', '=', 'done')]}" options="{'no_create': True}"/>
-                                    <field name="fiscal_position_id" options="{'no_create': True}" attrs="{'readonly': ['|', ('invoice_status','=', 'invoiced'), ('state', '=', 'done')]}"/>
+                                <group name="muestreo2_info">
+                                    <field name="equipo_id" string="Equipo Muestreo"/>
                                 </group>
                             </group>
                         </page>
+                        <page string="Corte" name="sample_corte">
+                            <group>
+                                <group name="corte1_info">
+                                </group>
+                                <group name="corte2_info">
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Alce" name="sample_alce">
+                            <group>
+                                <group name="alce1_info">
+                                </group>
+                                <group name="alce2_info">
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Acarreo" name="sample_acarreo">
+                            <group>
+                                <group name="acarreo1_info">
+                                </group>
+                                <group name="acarreo2_info">
+                                </group>
+                            </group>
+                        </page>
+
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
@@ -550,7 +324,7 @@
                 </form>
             </field>
         </record>
-        -->
+
        <record id="view_sample_order_filter" model="ir.ui.view">
             <field name="name">request.quotation.select</field>
             <field name="model">sample.order</field>
@@ -566,7 +340,7 @@
                     <separator/>
                     <filter name="draft" string="RFQs" domain="[('state', 'in', ('draft', 'sent', 'to approve'))]"/>
                     <separator/>
-                    <filter name="approved" string="sample Orders" domain="[('state', 'in', ('sample', 'done'))]"/>
+                    <filter name="approved" string="sample Orders" domain="[('state', 'in', ('draft', 'sample', 'done'))]"/>
                     <filter name="to_approve" string="To Approve" domain="[('state', '=', 'to approve')]"/>
                     <separator/>
                     <filter name="order_date" string="Order Date" date="date_order"/>
@@ -639,11 +413,11 @@
             <field name="name">sample.order.kanban</field>
             <field name="model">sample.order</field>
             <field name="arch" type="xml">
-                <kanban class="o_kanban_mobile" js_class="sample_kanban_dashboard" sample="1">
+                <kanban class="o_kanban_mobile" js_class="purchase_kanban_dashboard" sample="1">
                     <field name="name"/>
                     <field name="partner_id" readonly="1"/>
                     <field name="qty_total"/>
-                    <field name="porc_impureza" widget="percentpie"/>
+                    <field name="porc_impureza"/>
                     <field name="amount_total"/>
                     <field name="state"/>
                     <field name="date_order"/>
@@ -658,9 +432,9 @@
                                     <div class="o_kanban_record_headings ml-1">
                                         <strong class="o_kanban_record_title"><span><t t-esc="record.partner_id.value"/></span></strong>
                                     </div>
-                                    <strong><field name="qty_total"/></strong>
-                                    <strong><field name="porc_impureza" widget="percentpie"/></strong>
-                                    <strong><field name="amount_total" widget="monetary"/></strong>
+                                    <strong><field name="qty_total" string="Kg"/></strong>
+                                    <strong><field name="porc_impureza" widget="percentpie" string="% Impur."/></strong>
+                                    <!--<strong><field name="amount_total" widget="monetary"/></strong>-->
                                 </div>
                                 <div class="o_kanban_record_bottom">
                                     <div class="oe_kanban_bottom_left">
@@ -723,7 +497,7 @@
             <field name="priority" eval="10"/>
             <field name="arch" type="xml">
                 <tree string="sample Order" multi_edit="1" decoration-bf="message_unread==True"
-                      class="o_purchase_order" js_class="sample_list_dashboard" sample="1">
+                      class="o_purchase_order" js_class="purchase_list_dashboard" sample="1">
                     <header>
                         <button name="action_create_invoice" type="object" string="Create Bills"/>
                     </header>
@@ -763,7 +537,7 @@
                 <tree decoration-bf="message_unread==True"
                     decoration-muted="state=='cancel'"
                     decoration-info="state in ('wait','confirmed')"
-                    string="sample Order"
+                    string="Lista: Orden de Muestra"
                     class="o_purchase_order"
                     sample="1">
                     <header>
@@ -773,22 +547,22 @@
                     <field name="message_unread" invisible="1"/>
                     <field name="partner_ref" optional="hide"/>
                     <field name="name" string="Reference" readonly="1" decoration-bf="1"/>
-                    <field name="date_approve" widget="date" invisible="context.get('quotation_only', False)" optional="show"/>
-                    <field name="partner_id"/>
+                    <field name="date_approve" widget="date" invisible="context.get('quotation_only', False)" optional="hide"/>
+                    <field name="partner_id" optional="show"/>
                     <field name="up"/>
                     <field name="lote"/>
-                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" optional="show"/>
-                    <field name="date_planned" invisible="context.get('quotation_only', False)" optional="show"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" optional="hide"/>
+                    <field name="date_planned" invisible="context.get('quotation_only', False)" optional="hide"/>
                     <field name="user_id" widget="many2one_avatar_user" optional="show"/>
-                    <field name="date_order" invisible="not context.get('quotation_only', False)" optional="show"/>
-                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                    <field name="date_order" optional="show"/>
+                    <field name="activity_ids" widget="list_activity" optional="hide"/>
                     <field name="origin" optional="show"/>
                     <field name="amount_untaxed" sum="Total Untaxed amount" string="Untaxed" widget="monetary" optional="hide"/>
                     <field name="qty_total" sum="Cantidad Total" optional="show" decoration-bf="1"/>
-                    <field name="porc_impureza" widget="percentpie"/>
-                    <field name="amount_total" sum="Total amount" widget="monetary" optional="show" decoration-bf="1"/>
+                    <field name="porc_impureza" avg="Promedio" widget="percentpie" optional="show" decoration-bf="1"/>
+                    <field name="amount_total" sum="Total amount" widget="monetary" optional="hide" decoration-bf="1"/>
                     <field name="currency_id" invisible="1"/>
-                    <field name="state" invisible="1"/>
+                    <field name="state" optional="show" invisible="0"/>
                     <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'invoiced'" decoration-info="invoice_status == 'to invoice'" optional="show"/>
                 </tree>
             </field>
@@ -843,7 +617,7 @@
             <field name="res_model">sample.order</field>
             <field name="view_mode">tree,kanban,form,pivot,graph,calendar,activity</field>
             <field name="view_id" ref="sample_order_view_tree"/>
-            <field name="domain">[('state','in',('sample', 'done'))]</field>
+            <field name="domain">[('state','in',('draft', 'sample', 'done'))]</field>
             <field name="search_view_id" ref="sample_order_view_search"/>
             <field name="context">{}</field>
             <field name="help" type="html">
@@ -1014,12 +788,12 @@
                 parent="menu_sample_root"
                 sequence="1"/>
 
-                    <!--Menú: Request for Quotation-->
+                    <!--Menú: Request for Quotation
                     <menuitem action="sample_rfq"
                         id="menu_sample_rfq"
                         parent="menu_procurement_management"
                         sequence="2"/>
-
+                    -->
                     <!--Menú: Sample Order-->
                     <menuitem action="sample_form_action"
                         id="menu_sample_form_action"

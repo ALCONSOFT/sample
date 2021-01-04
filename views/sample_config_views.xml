@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="sample_config_view_form" model="ir.ui.view">
+            <field name="name">sample.config.view.form</field>
+            <field name="model">sample.config</field>
+            <field name="arch" type="xml">
+                <form string="sample_config">
+                    <h2>Units of Measure Sample</h2>
+                    <div class="row mt16 o_settings_container" id="product_general_settings">
+                        <div class="col-12 col-lg-6 o_setting_box" id="weight_uom_setting">
+                            <div class="o_setting_left_pane">
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="peso_minimo_muestra" string="Peso Mínimo"/>
+                                <div class="text-muted">
+                                    Define tu peso mínimo de muestra
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="peso_minimo_muestra" class="o_light_label"/>
+                                        <field name="weight_uom_name" class="o_light_label"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="sample_config_action" model="ir.actions.act_window">
+            <field name="name">Sample Config Action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sample.config</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <menuitem id="menu_in_config_sample"
+            name="Sample Config Menú"
+            action="sample_config_action"
+            parent="menu_sample_config"
+            sequence="40"/>
+
+
+</odoo>
