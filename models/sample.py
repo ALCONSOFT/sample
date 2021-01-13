@@ -48,7 +48,7 @@ class SampleOrder(models.Model):
                     linew.porc_item = 0
                 else:
                     linew.porc_item = linew.product_qty/linew.tot_qty*100
-                    if linew.name != '[MP-002] MUESTRA CAÑA LIMPIA':
+                    if not (linew.name == '[MP-002] MUESTRA CAÑA LIMPIA' or linew.name == '[MP-003] MUESTRA CAÑA DETERIORADA'):
                         porc_impu += linew.porc_item
             order.update({
                 'porc_impureza': porc_impu,
@@ -157,7 +157,7 @@ class SampleOrder(models.Model):
     reminder_date_before_receipt = fields.Integer('Days Before Receipt', related='partner_id.reminder_date_before_receipt', readonly=False)
     # AGREGANDO CAMPOS QUE NO ESTAN EN MODULO DE COMPRAS
     active = fields.Boolean('Activo', default=True)
-    guia = fields.Char('N° Guia:', required=True, index=True, copy=False, default='000000', states=READONLY_STATES)
+    guia = fields.Char('N° Guia:', required=True, index=True, copy=False, default='0000000000', states=READONLY_STATES)
     tickete = fields.Char('N° Tickete:', required=True, index=True, copy=False, default='000000',states=READONLY_STATES)
     frente = fields.Many2one('fincas_pma.frentes', string = 'Frente', tracking=True,states=READONLY_STATES)
     projects_id = fields.Many2one('project.project',string="Project",states=READONLY_STATES)
@@ -180,6 +180,8 @@ class SampleOrder(models.Model):
     porc_cana_limpia = fields.Float(string='Porc. Caña Limpia', store=True, readonly=True, compute='_amount_all',states=READONLY_STATES)
     tipo_cane = fields.Selection([('PV','CAÑA PICADA VERDE'),('PQ','CAÑA PICADA QUEMADA'),('LV','CAÑA LARGA VERDE'),('LQ','CAÑA LARGA QUEMADA')], tracking=True,states=READONLY_STATES)
     peso_muestra_total = fields.Float(string='Muestra Total', store=True, tracking=True,states=READONLY_STATES)
+    caja_muestra = fields.Many2one('maintenance.equipment',string="Equipo Caja muestra:", tracking=True, required=True,states=READONLY_STATES)
+    #fields.Char(string= 'Caja Muestra', tracking=True, states=READONLY_STATES)
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):
@@ -210,7 +212,10 @@ class SampleOrder(models.Model):
             self._cr.execute( query_str )
             fhiz = self._cr.fetchone()[5]
             print("Tipo dato [fhiz]", type(fhiz))
-            record.diazafra = str(float((datetime.now()-fhiz).days))
+            ln_dz = float((datetime.now()-fhiz).days)
+            if ln_dz <= 0:
+                ln_dz = 0
+            record.diazafra = str(ln_dz)
 
     @api.constrains('company_id', 'order_line')
     def _check_order_line_company_id(self):
@@ -896,7 +901,7 @@ class SampleOrderLine(models.Model):
     # campos agregados ##########################
     #############################################
     active = fields.Boolean('Activo', default=True)
-    guia = fields.Char('-N° Guia:', required=True, index=True, copy=False, default='000000')
+    guia = fields.Char('-N° Guia:', required=True, index=True, copy=False, default='0000000000')
     porc_item = fields.Float("-Porcentaje Muestra", store=True, digits='Product Unit of Measure')
     tot_qty = fields.Float("-Total Muestra", store=True, digits='Product Unit of Measure')
    
