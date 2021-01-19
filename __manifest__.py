@@ -19,6 +19,7 @@
     'version': 'Rama main 2021-01-01 - 14:30',
 
     # any module necessary for this one to work correctly
+    # 'report',
     'depends': ['base','purchase','fincas_pma', 'guias_pma'],
 
     # always loaded
@@ -31,6 +32,11 @@
         'data/sample_data.xml',
         'static/xls/product.category.csv',        
         'static/xls/product.template.csv',
+        'report/sample_reports.xml',
+        #'report/purchase_bill_views.xml',
+        #'report/purchase_report_views.xml',
+        #'report/purchase_order_templates.xml',
+        #'report/purchase_quotation_templates.xml',
     ],
     #'qweb': [
     #"static/src/xml/purchase_dashboard.xml",

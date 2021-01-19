@@ -904,17 +904,29 @@ class SampleOrderLine(models.Model):
     guia = fields.Char('-N° Guia:', required=True, index=True, copy=False, default='0000000000')
     porc_item = fields.Float("-Porcentaje Muestra", store=True, digits='Product Unit of Measure')
     tot_qty = fields.Float("-Total Muestra", store=True, digits='Product Unit of Measure')
+    # 2021-01-19 - 07:00
+    longitud_avg = fields.Float("-Longitud Prom. Muestra", store=True, digits='Product Unit of Measure')
    
     
     display_type = fields.Selection([
         ('line_section', "Section"),
         ('line_note', "Note")], default=False, help="Technical field for UX purpose.")
 
+#    SE ESTA INTENTANDO QUITAR POR INCOMPATIBILIDAD EN ACTUALIZACIONES DEL MODULO: "sample"
+#    _sql_constraints = [
+#        ('accountable_required_fields',
+#            "CHECK(display_type IS NOT NULL OR (product_id IS NOT NULL AND product_uom IS NOT NULL AND date_planned IS NOT NULL))",
+#            "Missing required fields on accountable Sample order line."),
+#            ('non_accountable_null_fields',
+#            "CHECK(display_type IS NULL OR (product_id IS NULL AND price_unit = 0 AND product_uom_qty = 0 AND product_uom IS NULL AND date_planned is NULL))",
+#            "Forbidden values on non-accountable Sample order line"),
+#    ]
+
     _sql_constraints = [
         ('accountable_required_fields',
-            "CHECK(display_type IS NOT NULL OR (product_id IS NOT NULL AND product_uom IS NOT NULL AND date_planned IS NOT NULL))",
+            "CHECK(display_type IS NULL OR (product_id IS NOT NULL AND product_uom IS NOT NULL AND date_planned IS NOT NULL))",
             "Missing required fields on accountable Sample order line."),
-        ('non_accountable_null_fields',
+            ('non_accountable_null_fields',
             "CHECK(display_type IS NULL OR (product_id IS NULL AND price_unit = 0 AND product_uom_qty = 0 AND product_uom IS NULL AND date_planned is NULL))",
             "Forbidden values on non-accountable Sample order line"),
     ]

@@ -209,18 +209,28 @@
                         <group>
                             <field name="guia"/>
                             <field name="caja_muestra"/>
-                            <field name="date_order" attrs="{'invisible': [('state','=','sample')]}"/>
+                            <field name="date_order"/>
+                            <!--
                             <label for="date_approve" attrs="{'invisible': [('state','!=','sample')]}"/>
                             <div name="date_approve" attrs="{'invisible': [('state','!=','sample')]}" class="o_row">
+                            -->
+                            <label for="date_approve" />
+                            <div name="date_approve" >
                                 <field name="date_approve"/>
                                 <field name="mail_reception_confirmed" invisible="1"/>
                                 <span class="text-muted" attrs="{'invisible': [('mail_reception_confirmed','=', False)]}">(confirmed by vendor)</span>
                             </div>
+                            <!--
                             <field name="origin" attrs="{'invisible': [('origin','=',False)]}"/>
                             <field name="hdc" attrs="{'invisible': [('state','=','sample')]}"/>
                             <label for="hdc" attrs="{'invisible': [('state','!=','sample')]}"/>
                             <field name="hdq" attrs="{'invisible': [('state','=','sample')]}"/>
                             <label for="hdq" attrs="{'invisible': [('state','!=','sample')]}"/>
+                            <field name="origin" />
+                            -->
+                            
+                            <field name="hdc" />
+                            <field name="hdq" />
                             <field name="porc_impureza" widget="percentpie"/>
                             <field name="peso_muestra_total"/>
                         </group>
@@ -255,6 +265,7 @@
                                     <field name="tot_qty" string="Tot.M." attrs="{'column_invisible': [('parent.state', 'not in', ('draft', 'sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="show"/>
                                     <field name="qty_received" string="Received" attrs="{'column_invisible': [('parent.state', 'not in', ('sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="show"/>
                                     <field name="product_uom" string="UoM"/>
+                                    <field name="longitud_avg"/>
                                 </tree>
                             </field>
                             <group class="oe_subtotal_footer oe_right">
@@ -645,6 +656,7 @@
                     <field name="product_qty"/>
                     <field name="porc_item"/>
                     <field name="product_uom" groups="uom.group_uom"/>
+                    <field name="longitud_avg"/>
                     <field name="price_subtotal" widget="monetary"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="date_planned"  widget="date"/>
@@ -674,6 +686,7 @@
                                 <div class="o_row">
                                     <field name="product_qty" readonly="1"/>
                                     <field name="product_uom" readonly="1" groups="uom.group_uom"/>
+                                    <field name="longitud_avg"/>
                                     <field name="porc_item" readonly="1"/>
                                 </div>
                                 <field name="price_unit"/>
