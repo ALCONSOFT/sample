@@ -16,7 +16,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': 'Rama main 2021-01-01 - 14:30',
+    'version': 'Rama main 2021-01-28 - 11:11',
 
     # any module necessary for this one to work correctly
     # 'report',
@@ -33,10 +33,10 @@
         'static/xls/product.category.csv',        
         'static/xls/product.template.csv',
         'report/sample_reports.xml',
-        #'report/purchase_bill_views.xml',
-        #'report/purchase_report_views.xml',
+        'report/purchase_report_views.xml',
         #'report/purchase_order_templates.xml',
         #'report/purchase_quotation_templates.xml',
+        #'report/purchase_bill_views.xml',        
     ],
     #'qweb': [
     #"static/src/xml/purchase_dashboard.xml",

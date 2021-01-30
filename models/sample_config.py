@@ -17,12 +17,23 @@ from odoo.tools.misc import formatLang, get_lang
 
 
 class SampleConfig(models.TransientModel):
-    _name = 'sample.config'
-    _inherit = 'res.config.settings'
+    _name = 'new_sample.config'
+#    _inherit = 'res.config.settings'
 
     name = fields.Char('configuración de Muestras', default='sample config')
-    peso_minimo_muestra = fields.Float('Peso Mínimo Muestra', tracking=True, store=True)
+    peso_minimo_muestra = fields.Float('Peso Mínimo Muestra Caña Picada', tracking=True, store=True, default=65.00)
     weight_uom_name = fields.Char(string='Etiqueta de unidad de medida de peso', compute='_compute_weight_uom_name',store=False)
+    peso_minimo_muestra_larga = fields.Float('Peso Mínimo Muestra Caña Larga', tracking=True, store=True, default=120.00)
+    # ALERTAS DE TIEMPO DE CORTE
+    alerta_ama_hora_verde = fields.Float('Alerta Amarilla Hrs Corte y Pesa de la Muestra Caña Verde', tracking=True, store=True, default = 10)
+    alerta_roj_hora_verde = fields.Float('Alerta Roja Hrs Corte y Pesa de la Muestra Caña Verde', tracking=True, store=True, default = 12)
+    alerta_ama_hora_quema = fields.Float('Alerta Amarilla Hrs Corte y Pesa de la Muestra Caña Qmda.', tracking=True, store=True, default = 30)
+    alerta_roj_hora_quema = fields.Float('Alerta Roja Hrs Corte y Pesa de la Muestra Caña Qmda.', tracking=True, store=True, default = 36)
+    # ALERTAS DE PORCENTAJE MATERIA EXTRAÑA
+    alerta_ama_porc_verde = fields.Float('Alerta Amarilla % Materia Extraña de la Muestra Caña Verde', tracking=True, store=True, default = 11)
+    alerta_roj_porc_verde = fields.Float('Alerta Roja % Materia Extraña de la Muestra Caña Verde', tracking=True, store=True, default = 16)
+    alerta_ama_porc_quema = fields.Float('Alerta Amarilla % Materia Extraña de la Muestra Caña Qmda.', tracking=True, store=True, default = 8)
+    alerta_roj_porc_quema = fields.Float('Alerta Roja % Materia Extraña de la Muestra Caña Qmda.', tracking=True, store=True, default = 13)
 
     def _compute_weight_uom_name(self):
         self.weight_uom_name = self._get_weight_uom_name_from_ir_config_parameter()

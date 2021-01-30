@@ -256,16 +256,16 @@
                                     <field name="product_uom_category_id" invisible="1"/>
                                     <field name="invoice_lines" invisible="1"/>
                                     <field name="sequence" widget="handle"/>
-                                    <field name="product_id"/>
-                                    <field name="name" widget="section_and_note_text"/>
-                                    <field name="product_qty"/>
+                                    <field name="product_id" optional="show"/>
+                                    <field name="name" widget="section_and_note_text" optional="show"/>
+                                    <field name="product_qty" optional="show"/>
                                     <field name="qty_received_manual" invisible="1"/>
                                     <field name="qty_received_method" invisible="1"/>
                                     <field name="porc_item" string="Porc.%" attrs="{'column_invisible': [('parent.state', 'not in', ('draft', 'sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="show"/>
                                     <field name="tot_qty" string="Tot.M." attrs="{'column_invisible': [('parent.state', 'not in', ('draft', 'sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="show"/>
-                                    <field name="qty_received" string="Received" attrs="{'column_invisible': [('parent.state', 'not in', ('sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="show"/>
-                                    <field name="product_uom" string="UoM"/>
-                                    <field name="longitud_avg"/>
+                                    <field name="qty_received" string="Received" attrs="{'column_invisible': [('parent.state', 'not in', ('sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="hide"/>
+                                    <field name="product_uom" string="UoM" optional="hide"/>
+                                    <field name="longitud_avg" optional="show"/>
                                 </tree>
                             </field>
                             <group class="oe_subtotal_footer oe_right">
@@ -821,5 +821,55 @@
                         parent="menu_procurement_management"
                         action="account.res_partner_action_supplier"
                         sequence="15"/>
+
+                        <!--Menú: Producto y Alarmas de Muestras de Caña-->
+        <!--Alarmas de Productos de Muestras-->
+        <record id="product_template_form_view_sample" model="ir.ui.view">
+            <field name="name">product.template.sample</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="ALERTAS-MUESTRAS">
+                        <group col="4" colspan="2">
+                                <group col="4" colspan="2">
+                                    <separator string="Datos ALERTAS Caña Verde" colspan="2"/>
+                                    <br/>
+                                    <field name="alerta_ama_porc_verde" />
+                                    <br/>
+                                    <field name="alerta_roj_porc_verde" />
+                                </group>
+                                <group col="4" colspan="2">
+                                    <separator string="Datos ALERTAS Caña Qmda." colspan="2"/>
+                                    <br/>
+                                    <field name="alerta_ama_porc_quema" />
+                                    <br/>
+                                    <field name="alerta_roj_porc_quema" />
+                                </group>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+    <record model="ir.actions.act_window" id="sample.action_window_product_sample">
+      <field name="name">sample window product sample</field>
+      <field name="res_model">product.template</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+            <menuitem id="menu_product_management"
+                name="Gestión de Productos en Mat. Ext."
+                parent="menu_sample_root"
+                sequence="11"/>
+
+                    <!--Menú:  -->
+                    <menuitem action="sample.action_window_product_sample"
+                        id="menu_sample_product"
+                        parent="menu_product_management"
+                        sequence="12"/>
+                    
+
 
 </odoo>

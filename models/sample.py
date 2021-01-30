@@ -1312,3 +1312,11 @@ class SampleOrderLine(models.Model):
                 values={'line': self, 'qty_received': new_qty},
                 subtype_id=self.env.ref('mail.mt_note').id
             )
+
+class ProductTemplateSample(models.Model):
+    _inherit = "product.template"
+
+    alerta_ama_porc_verde = fields.Float('_% Alerta Amarilla Caña Verde', tracking=True, default=99.0)
+    alerta_roj_porc_verde = fields.Float('_% Alerta Roja Caña Verde', tracking=True, default=100.0)
+    alerta_ama_porc_quema = fields.Float('_% Alerta Amarilla Caña Qmda.', tracking=True, default=99.0)
+    alerta_roj_porc_quema = fields.Float('_% Alerta Roja Caña Qmda.', tracking=True, default=100.0)    

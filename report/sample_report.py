@@ -173,7 +173,7 @@ class SampleReport(models.Model):
 
         res = []
         if fields:
-            res = super(PurchaseReport, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
+            res = super(SampleReport, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
 
         if not res and avg_days_to_purchase:
             res = [{}]
