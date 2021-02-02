@@ -1,4 +1,4 @@
-select po.name "Muestra 1",
+select po.name "Muestra",
 	po.date_order "FH Muestra",
 	co.fechahoracaptura "FH Guia", 
 	co.fecha_guia, 
