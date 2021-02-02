@@ -10,7 +10,8 @@
         - Se agregó alertas amarilla y roja a los items (contenido de M.E. materia Extraña)
         - Se cambió archivo de configuracón de sample (Muestras).
         - Se agregaron las alertas generales de la muestra para Caña larga, En Tiempo y % de Muestra.
-
+        - 2021-02-02 - Se agregó campo "longitud_Avg1" en el encabezado, para no usar el campo: longitud_Avg en elñ detalle
+    
     """,
 
     'author': "Alconsoft",
@@ -20,7 +21,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': 'Rama main 2021-02-01 - 22:30',
+    'version': 'Rama main 2021-02-02 - 15:10',
 
     # any module necessary for this one to work correctly
     # 'report',
