@@ -4,11 +4,13 @@
             <field name="name">product.month.pivot</field>
             <field name="model">sample.report</field>
             <field name="arch" type="xml">
-                <pivot string="Sample Analysis" disable_linking="True" display_quantity="true" sample="1">
+                <pivot string="Sample Analysis Pivot" disable_linking="True" display_quantity="true" sample="1">
                     <field name="category_id" type="row"/>
                     <field name="order_id" type="measure"/>
                     <field name="untaxed_total" type="measure"/>
                     <field name="price_total" type="measure"/>
+
+
                 </pivot>
             </field>
         </record>
@@ -59,7 +61,7 @@
     </record>
 
     <record id="action_sample_order_report_all" model="ir.actions.act_window">
-        <field name="name">Sample Analysis</field>
+        <field name="name">Sample Analysis Acción</field>
         <field name="res_model">sample.report</field>
         <field name="view_mode">graph,pivot</field>
         <field name="view_id"></field>  <!-- force empty -->

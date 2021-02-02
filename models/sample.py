@@ -181,6 +181,9 @@ class SampleOrder(models.Model):
     tipo_cane = fields.Selection([('PV','CAÑA PICADA VERDE'),('PQ','CAÑA PICADA QUEMADA'),('LV','CAÑA LARGA VERDE'),('LQ','CAÑA LARGA QUEMADA')], tracking=True,states=READONLY_STATES, required=True)
     peso_muestra_total = fields.Float(string='Muestra Total', store=True, tracking=True,states=READONLY_STATES)
     caja_muestra = fields.Many2one('maintenance.equipment',string="Equipo Caja muestra:", tracking=True, required=True,states=READONLY_STATES)
+    # 2021-02-01 - 22:00
+    longitud_avg1 = fields.Float("-Long. Prom. Muestra", store=True, digits='Product Unit of Measure')
+
     #fields.Char(string= 'Caja Muestra', tracking=True, states=READONLY_STATES)
     # 2021-02-02 - 15:00
     longitud_avg1 = fields.Float("-Long. Prom. Muestra", store=True, digits='Product Unit of Measure', required=True, tracking=True)
@@ -466,10 +469,10 @@ class SampleOrder(models.Model):
     def button_confirm(self):
         # 2021-01-02
         # Valindando que el peso de la muestra sea mayor que cantidad mínima requerida.
-        if (self.tipo_cane=='PV' or self.tipo_cane=='PQ'):
+        if (self.tipo_cane == 'PV' or self.tipo_cane == 'PQ'):
             query_str = 'SELECT peso_minimo_muestra FROM new_sample_config sc'
         else:
-            query_str = 'SELECT peso_minimo_muestra_larga FROM new_sample_config sc'
+            query_str = 'SELECT peso_minimo_muestra_larga AS peso_minimo_muestra  FROM new_sample_config sc'
         self._cr.execute( query_str )
         m_peso_minimo = self._cr.fetchone()[0]
         print("Peso mínimo de Muestra: ", m_peso_minimo)
