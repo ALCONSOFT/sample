@@ -6,7 +6,11 @@
         Strange Matter: Materia Extraña en mestras de Caña de Azúcar""",
 
     'description': """
-        Strange Matter: Materia Extraña en mestras de Caña de Azúcar
+        Strange Matter: Materia Extraña en mestras de Caña de Azúcar.
+        - Se agregó alertas amarilla y roja a los items (contenido de M.E. materia Extraña)
+        - Se cambió archivo de configuracón de sample (Muestras).
+        - Se agregaron las alertas generales de la muestra para Caña larga, En Tiempo y % de Muestra.
+
     """,
 
     'author': "Alconsoft",
@@ -16,7 +20,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': 'Rama main 2021-01-28 - 11:11',
+    'version': 'Rama main 2021-02-01 - 22:30',
 
     # any module necessary for this one to work correctly
     # 'report',
