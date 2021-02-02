@@ -51,12 +51,13 @@ class SampleReport(models.Model):
     commercial_partner_id = fields.Many2one('res.partner', 'Commercial Entity', readonly=True)
     weight = fields.Float('Gross Weight', readonly=True)
     volume = fields.Float('Volume', readonly=True)
-    order_id = fields.Many2one('purchase.order', 'Order', readonly=True)
+    order_id = fields.Many2one('sample.order', 'Sample Order', readonly=True)
     untaxed_total = fields.Float('Untaxed Total', readonly=True)
     qty_ordered = fields.Float('Qty Ordered', readonly=True)
     qty_received = fields.Float('Qty Received', readonly=True)
     qty_billed = fields.Float('Qty Billed', readonly=True)
     qty_to_be_billed = fields.Float('Qty to be Billed', readonly=True)
+    product_qty = fields.Float(string='Peso M.E.', digits='Product Unit of Measure', required=True)
 
     def init(self):
         # self._table = sale_report
@@ -68,8 +69,12 @@ class SampleReport(models.Model):
             )""" % (self._table, self._select(), self._from(), self._group_by()))
 
     def _select(self):
-        select_str = """SELECT po.name "Muestra",
+        select_str = """SELECT 
+            po.id as order_id,
+            min(l.id) as id,
+            po.name,
             po.date_order "FH Muestra",
+            po.date_approve,
             co.fechahoracaptura "FH Guia", 
             co.fecha_guia, 
             co.hora_entrada, 
@@ -79,6 +84,7 @@ class SampleReport(models.Model):
             me.codigo_activo "Caja",
             (case WHEN me.codigo_activo = co.caja1 then co.alce1 else co.alce2 end) "EQUIPO CyA" ,
             (case WHEN me.codigo_activo = co.caja1 then co.epl_alce1 else co.epl_alce2 end) "Operador CyA" ,
+            po.partner_id,
             partner.name "Proveedor",
             po.state "Estatus",
             po.guia,
@@ -93,19 +99,22 @@ class SampleReport(models.Model):
             po.hdc "FechaHora Corte",
             po.qty_total "Cant. Total",
             po.porc_impureza "_% Impur.",
+            t.categ_id as category_id,
             pc."name" "Categoria",
+            sum(l.price_subtotal / COALESCE(po.currency_rate, 1.0))::decimal(16,2) as untaxed_total,
+            sum(l.price_total / COALESCE(po.currency_rate, 1.0))::decimal(16,2) as price_total,
             t.description "Nota/Causa",
             t.default_code "Código M.E.",
             l."name" "Nombre M.E.",
-            l.product_qty "Peso M.E.",
+            l.product_qty ,
             l.porc_item "_% M.E.",
-            (l.longitud_avg) "_Longitud"
+            l.longitud_avg "_Longitud"
         """
         return select_str
 
     def _from(self):
         from_str = """
-       "sample_order_line l
+        sample_order_line l
         join sample_order po on (l.order_id=po.id)
         join res_partner partner on po.partner_id = partner.id
             left join product_product p on (l.product_id=p.id)
@@ -119,12 +128,51 @@ class SampleReport(models.Model):
         left join fincas_pma_tiposcortes fpt on (fpt.id = po.tipocorte)
         left join purchase_order co on (cast (co.secuencia_guia as VARCHAR ) = po.guia) 
         	left join maintenance_equipment me on (me.id=po.caja_muestra)
-        order by PO.date_order, l.product_id
         """
         return from_str
 
     def _group_by(self):
         group_by_str = """
+            GROUP BY
+                po.id,
+                co.fecha_guia,
+                po.date_order ,
+                po.date_approve,
+                co.fechahoracaptura, 
+                po.name,            
+                co.hora_entrada, 
+                co.dia_zafra ,
+                co.lote_hora ,
+                co.turno ,
+                me.codigo_activo,
+                co.caja1,
+                co.caja2,
+                co.alce1,
+                co.alce2,
+                co.epl_alce1,
+                co.epl_alce2,
+                partner.name ,
+                po.state,
+                po.guia,
+                po.tickete,
+                po.frente ,
+                pp."name",
+                fpu."name",
+                pp.lote,
+                fpv."name",
+                fpt."name",
+                po.tipo_cane ,
+                po.hdc ,
+                po.qty_total,
+                po.porc_impureza ,
+                t.categ_id,
+                pc."name" ,
+                t.description,
+                t.default_code,
+                l."name",
+                l.product_qty,
+                l.porc_item,
+                l.longitud_avg
         """
         return group_by_str
 
