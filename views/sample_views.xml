@@ -204,6 +204,7 @@
                             <field name="variedad"/>
                             <label for="tipo_cane" string="Tipo Caña"/>
                             <field name="tipo_cane" nolabel="1"/>
+                            <field name="longitud_avg1"/>
                             
                         </group>
                         <group>
@@ -265,7 +266,7 @@
                                     <field name="tot_qty" string="Tot.M." attrs="{'column_invisible': [('parent.state', 'not in', ('draft', 'sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="show"/>
                                     <field name="qty_received" string="Received" attrs="{'column_invisible': [('parent.state', 'not in', ('sample', 'done'))], 'readonly': [('qty_received_method', '!=', 'manual')]}" optional="hide"/>
                                     <field name="product_uom" string="UoM" optional="hide"/>
-                                    <field name="longitud_avg" optional="show"/>
+                                    <field name="longitud_avg" optional="hide"/>
                                 </tree>
                             </field>
                             <group class="oe_subtotal_footer oe_right">
