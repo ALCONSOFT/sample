@@ -182,6 +182,8 @@ class SampleOrder(models.Model):
     peso_muestra_total = fields.Float(string='Muestra Total', store=True, tracking=True,states=READONLY_STATES)
     caja_muestra = fields.Many2one('maintenance.equipment',string="Equipo Caja muestra:", tracking=True, required=True,states=READONLY_STATES)
     #fields.Char(string= 'Caja Muestra', tracking=True, states=READONLY_STATES)
+    longitud_avg1 = fields.Float("-Longitud Prom. Muestra", store=True, digits='Product Unit of Measure')
+    porc_diatraea = fields.Float(string='Porc. Diatraea', store=True, states=READONLY_STATES)
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):
