@@ -205,6 +205,7 @@
                             <label for="tipo_cane" string="Tipo Caña"/>
                             <field name="tipo_cane" nolabel="1"/>
                             <field name="longitud_avg1"/>
+                            <field name="porc_diatraea"/>
                             
                         </group>
                         <group>

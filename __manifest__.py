@@ -21,7 +21,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': 'Rama main 2021-02-02 - 15:10',
+    'version': 'Rama main 2021-02-15 - 14:45',
 
     # any module necessary for this one to work correctly
     # 'report',
