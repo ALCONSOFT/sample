@@ -185,6 +185,8 @@ class SampleOrder(models.Model):
     # 2021-02-02 - 15:00
     longitud_avg1 = fields.Float("-Long. Prom. Muestra", store=True, digits='Product Unit of Measure', required=True, tracking=True)
     porc_diatraea = fields.Float(string='Porc. Diatraea', store=True, required=True, tracking=True, states=READONLY_STATES)
+    # 2021-02-19 - 16:10
+    duracion = fields.Char('Duración Muestreo', required=True, tracking=True, default='00:00')
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):

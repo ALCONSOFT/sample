@@ -234,6 +234,7 @@
                             <field name="hdq" />
                             <field name="porc_impureza" widget="percentpie"/>
                             <field name="peso_muestra_total"/>
+                            <field name="duracion" string="Duración (mins.)" />
                         </group>
                     </group>
                     <notebook>
