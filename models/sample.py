@@ -8,7 +8,7 @@ from itertools import groupby
 from pytz import timezone, UTC
 from werkzeug.urls import url_encode
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models, 
 from odoo.osv import expression
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools.float_utils import float_is_zero
@@ -187,6 +187,7 @@ class SampleOrder(models.Model):
     porc_diatraea = fields.Float(string='Porc. Diatraea', store=True, required=True, tracking=True, states=READONLY_STATES)
     # 2021-02-19 - 16:10
     duracion = fields.Char('Duración Muestreo', required=True, tracking=True, default='00:00')
+    porc_castnia = fields.Float(string='Porc. Castnia', store=True, required=True, tracking=True, states=READONLY_STATES)
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):
