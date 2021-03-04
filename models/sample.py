@@ -187,6 +187,8 @@ class SampleOrder(models.Model):
     porc_diatraea = fields.Float(string='Porc. Diatraea', store=True, required=True, tracking=True, states=READONLY_STATES)
     # 2021-02-19 - 16:10
     duracion = fields.Char('Duración Muestreo', required=True, tracking=True, default='00:00')
+    # 2021-03-04 - 16:20
+    porc_castnia = fields.Float(string='Porc. Castnia', store=True, required=True, tracking=True, states=READONLY_STATES)
 
     @api.onchange('projects_id')
     def _devuelve_tipocorte_project(self):
