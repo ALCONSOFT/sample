@@ -206,6 +206,7 @@
                             <field name="tipo_cane" nolabel="1"/>
                             <field name="longitud_avg1"/>
                             <field name="porc_diatraea" />
+                            <field name="porc_castnia" />
                         </group>
                         <group>
                             <field name="guia"/>
