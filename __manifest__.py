@@ -13,6 +13,7 @@
         - 2021-02-02 - Se agregó campo "longitud_Avg1" en el encabezado, para no usar el campo: longitud_Avg en elñ detalle
         - 2021-02-13 - Diatraea
         - 2021-02-19 - Duración
+        - 2021-03-05 - Castnia (parasito)
     
     """,
 
@@ -23,7 +24,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': 'Rama main 2021-02-19 - 16:20',
+    'version': '2021-03-05 - 08:45',
 
     # any module necessary for this one to work correctly
     # 'report',
